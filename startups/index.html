@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test de preparación para inversión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700;6..12,800&display=swap">
+<style>
+  :root {
+    --navy: #001B49;
+    --navy-black: #070A22;
+    --blue: #1E60FD;
+    --blue-soft: #94ADFB;
+    --blue-tint: #E7EDFE;
+    --blue-tint-2: #D6E0FD;
+    --white: #FFFFFF;
+    --paper: #F4F6FC;
+    --surface-2: #ECF0FA;
+    --ink: #0A1224;
+    --ink-soft: #4C5670;
+    --ink-faint: #8892A8;
+    --line: #DDE3F2;
+    --shadow: 0 24px 48px -26px rgba(0, 27, 73, 0.35);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 40px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .stage {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ---- brand hero ---- */
+  .hero {
+    background:
+      radial-gradient(120% 160% at 85% -20%, rgba(30, 96, 253, 0.35), transparent 60%),
+      linear-gradient(155deg, var(--navy) 0%, var(--navy-black) 100%);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 28px 26px 26px;
+    text-align: center;
+  }
+  .hero-logo {
+    width: 96px;
+    height: auto;
+    display: block;
+    margin: 0 auto 14px;
+  }
+  .hero-word {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.16em;
+    color: var(--white);
+  }
+  .hero-tagline {
+    font-weight: 500;
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--blue-soft);
+    margin-top: 3px;
+  }
+  .hero-divider {
+    width: 32px;
+    height: 2px;
+    background: var(--blue);
+    border-radius: 2px;
+    margin: 16px auto 14px;
+    opacity: 0.8;
+  }
+  .hero-title {
+    font-weight: 700;
+    font-size: 1.32rem;
+    line-height: 1.25;
+    color: var(--white);
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    font-weight: 500;
+    font-size: 0.86rem;
+    color: rgba(255,255,255,0.65);
+    margin: 0;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---- mercury progress ---- */
+  .mercury-track {
+    height: 6px;
+    background: var(--surface-2);
+    position: relative;
+  }
+  .mercury-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: var(--blue);
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .panel { padding: 28px 26px 26px; }
+
+  /* ---- intro ---- */
+  .intro-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--blue-tint);
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  h1.title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .lede {
+    font-size: 0.98rem;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-num {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--navy);
+  }
+  .meta-label {
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+  button:focus-visible, a:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    border: none;
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--navy-black); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* ---- question ---- */
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+  .q-count {
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .q-axis {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 999px;
+  }
+  .q-axis.control { background: var(--blue-tint); color: var(--navy); }
+  .q-axis.growth { background: var(--blue-tint-2); color: var(--blue); }
+
+  .q-text {
+    font-weight: 700;
+    font-size: 1.22rem;
+    line-height: 1.4;
+    margin: 0 0 24px;
+    text-wrap: balance;
+    color: var(--ink);
+    min-height: 2.8em;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  }
+  .opt .num {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    width: 16px;
+    flex-shrink: 0;
+  }
+  .opt:hover { border-color: var(--blue); }
+  .opt:active { transform: scale(0.985); }
+  .opt.chosen {
+    border-color: var(--blue);
+    background: var(--blue-tint);
+  }
+  .opt.chosen .num { color: var(--navy); }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+  }
+  .back-link {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 2px;
+  }
+  .back-link:hover { color: var(--ink-soft); }
+  .back-link:disabled { visibility: hidden; }
+
+  /* ---- results ---- */
+  .result-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .result-title {
+    font-weight: 800;
+    font-size: 1.48rem;
+    line-height: 1.24;
+    margin: 0 0 14px;
+    color: var(--navy);
+    text-wrap: balance;
+  }
+  .result-copy {
+    font-size: 0.96rem;
+    font-weight: 400;
+    line-height: 1.58;
+    color: var(--ink-soft);
+    margin: 0 0 26px;
+  }
+
+  .gauges {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .gauge {
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 16px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .gauge-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    text-align: center;
+    min-height: 2.4em;
+  }
+  .gauge-tube {
+    width: 34px;
+    height: 130px;
+    border-radius: 17px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .gauge-tube .fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 0%;
+    border-radius: 0 0 15px 15px;
+    transition: height 1s cubic-bezier(.16,1,.3,1);
+  }
+  .gauge-tube.control .fill { background: linear-gradient(180deg, var(--navy), var(--navy-black)); }
+  .gauge-tube.growth .fill { background: linear-gradient(180deg, var(--blue-soft), var(--blue)); }
+  .gauge-score {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .gauge-max { color: var(--ink-faint); font-weight: 600; font-size: 0.85rem; }
+
+  .name-field {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .name-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 11px 13px;
+    margin-bottom: 14px;
+  }
+  .name-input:focus { border-color: var(--blue); outline: none; }
+  .name-input::placeholder { color: var(--ink-faint); }
+
+  .whatsapp-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--blue);
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 18px;
+    border-radius: 12px;
+    transition: filter 0.15s ease, transform 0.1s ease;
+  }
+  .whatsapp-btn:hover { filter: brightness(1.08); }
+  .whatsapp-btn:active { transform: scale(0.98); }
+  .whatsapp-btn svg { flex-shrink: 0; }
+
+  .email-fallback {
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-top: 12px;
+  }
+  .email-fallback:hover { color: var(--ink-soft); }
+
+  .restart-row {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .restart-row button {
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    padding: 16px 10px 0;
+  }
+
+  .contact-lede { font-size: 0.94rem; line-height: 1.55; color: var(--ink-soft); margin: 0 0 20px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 5px; }
+  .field label .opt-tag { font-weight: 500; color: var(--ink-faint); }
+  .field input, .field select {
+    width: 100%; font-family: inherit; font-size: 0.95rem; color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px;
+  }
+  .field input:focus, .field select:focus { border-color: var(--blue); outline: none; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.8rem; line-height: 1.45; color: var(--ink-soft); margin: 6px 0 16px; }
+  .consent input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--navy); }
+  .form-error { color: #B42318; font-size: 0.82rem; font-weight: 600; margin: 0 0 12px; min-height: 1em; }
+  .btn-primary:disabled { opacity: 0.6; cursor: wait; }
+  @media (max-width: 380px) { .field-row { grid-template-columns: 1fr; } }
+
+  .hidden { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mercury-fill, .gauge-tube .fill, .btn-primary, .opt, .whatsapp-btn { transition: none !important; }
+  }
+
+  @media (max-width: 380px) {
+    .panel { padding: 22px 20px 22px; }
+    .hero { padding: 24px 20px 22px; }
+    h1.title { font-size: 1.32rem; }
+    .q-text { font-size: 1.1rem; }
+  }
+
+  .num-wrap { display: flex; align-items: center; gap: 8px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; padding: 4px 14px; }
+  .num-wrap:focus-within { border-color: var(--blue); }
+  .num-prefix { font-weight: 700; color: var(--ink-faint); }
+  .num-input { flex: 1; border: none; background: transparent; font-family: inherit; font-size: 1.15rem; font-weight: 700; color: var(--ink); padding: 12px 0; outline: none; min-width: 0; }
+  .num-help { font-size: 0.8rem; color: var(--ink-faint); margin: 8px 2px 18px; line-height: 1.45; }
+  .skip-link { display: block; width: 100%; margin-top: 10px; background: none; border: none; color: var(--ink-faint); font-size: 0.85rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; padding: 8px; }
+  .q-help { font-size: 0.85rem; color: var(--ink-faint); margin: -14px 0 20px; line-height: 1.45; }
+
+  .lights { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .light { display: grid; grid-template-columns: 12px 1fr auto; gap: 4px 12px; align-items: start; background: var(--paper); border-radius: 12px; padding: 13px 14px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; }
+  .dot.verde { background: #12B76A; } .dot.amarillo { background: #F5B70A; } .dot.rojo { background: #E5484D; } .dot.nd { background: #B8C0D3; }
+  .light-name { font-weight: 700; font-size: 0.9rem; color: var(--ink); }
+  .light-val { font-weight: 800; font-size: 0.9rem; color: var(--navy); font-variant-numeric: tabular-nums; text-align: right; }
+  .light-text { grid-column: 2 / 4; font-size: 0.82rem; line-height: 1.45; color: var(--ink-soft); }
+  .disclaimer { font-size: 0.74rem; line-height: 1.45; color: var(--ink-faint); margin: 14px 0 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="hero">
+    <img class="hero-logo" alt="Quimera Group" src="data:image/png;base64,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">
+    <div class="hero-word">QUIMERA GROUP</div>
+    <div class="hero-tagline">&ldquo;Inteligencia comercial&rdquo;</div>
+    <div class="hero-divider"></div>
+    <h1 class="hero-title">Test de preparación para inversión</h1>
+    <p class="hero-sub">Diagnóstico gratuito para founders</p>
+  </div>
+
+  <div class="card">
+    <div class="mercury-track"><div class="mercury-fill" id="mercuryFill"></div></div>
+    <div class="panel">
+
+      <!-- INTRO -->
+      <div id="screenIntro">
+        <span class="intro-eyebrow">Autodiagnóstico gratuito</span>
+        <h1 class="title">¿Tu startup está lista para levantar capital?</h1>
+        <p class="lede">13 preguntas sobre tus números. Te mostramos cómo te vería un inversionista: crecimiento, margen, caja, valoración y tamaño de la ronda, comparados con referencias de tu sector y tu mercado.</p>
+        <div class="meta-row">
+          <div class="meta-item"><span class="meta-num">13</span><span class="meta-label">preguntas</span></div>
+          <div class="meta-item"><span class="meta-num">~4</span><span class="meta-label">minutos</span></div>
+          <div class="meta-item"><span class="meta-num">0</span><span class="meta-label">costo</span></div>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">Empezar →</button>
+      </div>
+
+      <!-- QUESTION -->
+      <div id="screenQuestion" class="hidden">
+        <div class="q-meta">
+          <span class="q-count" id="qCount">Pregunta 1 / 13</span>
+          <span class="q-axis control" id="qAxis">Perfil</span>
+        </div>
+        <p class="q-text" id="qText"></p>
+        <p class="q-help hidden" id="qHelp"></p>
+        <div class="options" id="qOptions"></div>
+        <div id="qNumber" class="hidden">
+          <div class="num-wrap"><span class="num-prefix">US$</span>
+            <input class="num-input" id="numInput" type="text" inputmode="numeric" autocomplete="off" placeholder="0"></div>
+          <p class="num-help" id="numHelp">Cifra aproximada en dólares. Sin puntos ni comas.</p>
+          <button class="btn-primary" onclick="submitNumber()">Siguiente →</button>
+          <button class="skip-link" onclick="skipNumber()">No lo sé / prefiero no decirlo</button>
+        </div>
+        <div class="nav-row">
+          <button class="back-link" id="backBtn" onclick="prevQuestion()">← Anterior</button>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div id="screenContact" class="hidden">
+        <span class="intro-eyebrow">Tu resultado está listo</span>
+        <h1 class="title">¿A nombre de quién lo guardamos?</h1>
+        <p class="contact-lede">Déjanos tus datos para ver tu resultado. Julio puede escribirte para comentarlo, sin compromiso.</p>
+        <form id="contactForm" novalidate onsubmit="submitContact(event)">
+          <div class="field"><label for="fNombre">Nombre y apellido</label>
+            <input id="fNombre" type="text" autocomplete="name" maxlength="120"></div>
+          <div class="field"><label for="fEmpresa">Nombre de la startup</label>
+            <input id="fEmpresa" type="text" autocomplete="organization" maxlength="160"></div>
+          <div class="field-row">
+            <div class="field"><label for="fWhatsapp">WhatsApp</label>
+              <input id="fWhatsapp" type="tel" autocomplete="tel" maxlength="30" placeholder="+58 412 123 4567"></div>
+            <div class="field"><label for="fEmail">Correo</label>
+              <input id="fEmail" type="email" autocomplete="email" maxlength="160" placeholder="tu@startup.com"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="fCiudad">Ciudad y país</label>
+              <input id="fCiudad" type="text" autocomplete="address-level2" maxlength="80" placeholder="Caracas, Venezuela"></div>
+            <div class="field"><label for="fPresupuesto">Presupuesto para asesoría</label>
+              <select id="fPresupuesto">
+                <option value="">Elige uno</option>
+                <option value="0">Por ahora, nada</option>
+                <option value="50">Menos de US$100</option>
+                <option value="200">US$100 a 300</option>
+                <option value="500">US$300 a 700</option>
+                <option value="1100">US$700 a 1.500</option>
+                <option value="2000">Más de US$1.500</option>
+              </select></div>
+          </div>
+          <label class="consent"><input id="fConsent" type="checkbox">
+            <span id="consentText">Autorizo a Quimera Group a guardar mis datos para contactarme sobre mi resultado, y a usar mis respuestas de forma anónima y agregada en estudios y contenidos. Nunca se publicarán datos que me identifiquen ni los de mi startup.</span></label>
+          <p class="form-error" id="formError" role="alert"></p>
+          <button class="btn-primary" id="contactBtn" type="submit">Ver mi resultado →</button>
+        </form>
+      </div>
+
+      <!-- RESULT -->
+      <div id="screenResult" class="hidden">
+        <p class="result-eyebrow">Tu resultado</p>
+        <h2 class="result-title" id="resultTitle"></h2>
+        <p class="result-copy" id="resultCopy"></p>
+        <div class="lights" id="lights"></div>
+
+        <a class="whatsapp-btn" id="waBtn" href="#" target="_blank" rel="noopener">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.85 9.85 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.1c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.52 1.9 1.05.94 1.93 1.23 2.21 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.27.36-.22.61-.13.24.09 1.55.73 1.82.87.26.13.44.19.5.3.06.11.06.63-.18 1.31z"/></svg>
+          <span>Conversar mi resultado con Julio</span>
+        </a>
+        <a class="email-fallback" id="emailBtn" href="#">¿Prefieres correo? Escríbeme aquí</a>
+        <p class="disclaimer">Lectura orientativa hecha con tus propios datos y referencias generales de mercado (Equidam, 2026). No es una valoración ni asesoría de inversión.</p>
+        <div class="restart-row"><button onclick="startQuiz()">Volver a hacer el test</button></div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="footer-note">Quimera Group C.A. · Vuelvo invertible tu startup<br>Tus datos se usan solo para contactarte y, sin identificarte, para estudios agregados.</p>
+</div>
+
+<script>
+  var WHATSAPP_NUMBER = "584122418591";
+  var JULIO_EMAIL = "jgmarinelli@gmail.com";
+  var SUPABASE_URL = "https://teduklaiajecldjlzlem.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_LB00MH8nbYUKYqHACuT4NA_CgvNhj_o";
+  var VERSION = "test-startups-v1-2026-10";
+  var params = new URLSearchParams(location.search);
+  var ORIGEN = (params.get("o") || params.get("origen") || params.get("utm_source") || "directo").slice(0, 80);
+
+  // Umbrales por vertical (de la hoja Referencias del Intake): margen rojo/verde, concentración verde/rojo, crecimiento rojo/verde
+  var VERTICALES = {
+    "Servicios / Agencia tech": { mR: .30, mV: .50, cV: .20, cR: .40, gR: .02, gV: .08 },
+    "SaaS B2B":                 { mR: .55, mV: .70, cV: .20, cR: .40, gR: .03, gV: .10 },
+    "Fintech / Pagos":          { mR: .30, mV: .45, cV: .20, cR: .40, gR: .03, gV: .10 },
+    "Marketplace / Plataforma": { mR: .30, mV: .45, cV: .20, cR: .40, gR: .03, gV: .10 },
+    "Hardware / IoT":           { mR: .35, mV: .45, cV: .20, cR: .40, gR: .02, gV: .06 },
+    "Cripto / RWA / Web3":      { mR: .30, mV: .45, cV: .20, cR: .40, gR: .03, gV: .10 },
+    "Comercio / Consumo":       { mR: .25, mV: .40, cV: .20, cR: .40, gR: .02, gV: .06 }
+  };
+  // Referencias por mercado (Equidam H1 2026): valoración pre-seed mediana, runway rojo/verde (meses)
+  var MERCADOS = {
+    "Venezuela":             { med: 2400000, rR: 6, rV: 12 },
+    "Latinoamérica":         { med: 2400000, rR: 6, rV: 18 },
+    "Estados Unidos / diáspora": { med: 5160000, rR: 6, rV: 18 },
+    "Europa":                { med: 3300000, rR: 6, rV: 18 },
+    "Otro":                  { med: 5200000, rR: 6, rV: 18 }
+  };
+
+  var questions = [
+    { id: "etapa", block: "Perfil", text: "¿En qué etapa está tu startup?", type: "choice",
+      options: ["Idea", "Prototipo / MVP", "Primeros ingresos", "Ingresos recurrentes", "Pre-seed en curso"] },
+    { id: "vertical", block: "Perfil", text: "¿Qué tipo de startup es?", type: "choice", options: Object.keys(VERTICALES) },
+    { id: "mercado", block: "Perfil", text: "¿Dónde está la mayoría de tus clientes?", type: "choice", options: Object.keys(MERCADOS) },
+    { id: "ingreso_ultimo_mes", block: "Tracción", text: "¿Cuánto cobraste el último mes?", type: "number", help: "Lo que efectivamente entró a caja, no lo facturado. Si aún no vendes, escribe 0." },
+    { id: "ingreso_hace_3m", block: "Tracción", text: "¿Y cuánto cobraste hace tres meses?", type: "number", help: "El mismo dato, pero de tres meses atrás. Sirve para medir tu ritmo de crecimiento." },
+    { id: "gasto_mensual", block: "Economía", text: "¿Cuánto gastas en total al mes?", type: "number", help: "Todo junto: costos de entregar, operación y sueldos, incluido el tuyo si lo cobras." },
+    { id: "caja", block: "Economía", text: "¿Cuánta caja tienes disponible hoy?", type: "number", help: "Dinero en cuentas que puedes usar para operar." },
+    { id: "margen_bruto", block: "Economía", text: "De cada dólar que vendes, ¿cuánto te queda después de los costos directos de entregar?", type: "choice",
+      options: ["Menos de 30%", "Entre 30% y 50%", "Entre 50% y 70%", "Más de 70%", "No lo sé"], values: [.20, .40, .60, .80, null] },
+    { id: "concentracion", block: "Tracción", text: "¿Qué parte de tus ingresos viene de tu cliente más grande?", type: "choice",
+      options: ["Menos de 20%", "Entre 20% y 40%", "Entre 40% y 60%", "Más de 60%", "Aún no tengo clientes"], values: [.15, .30, .50, .70, null] },
+    { id: "monto_busca", block: "Capital", text: "¿Cuánto capital quieres levantar?", type: "number", help: "El monto de la ronda que tienes en mente." },
+    { id: "porcentaje_ofrece", block: "Capital", text: "¿Qué porcentaje de la empresa estarías dispuesto a ofrecer por ese monto?", type: "choice",
+      options: ["5% o menos", "Alrededor de 10%", "Alrededor de 15%", "Alrededor de 20%", "25% o más", "No lo he pensado"], values: [.05, .10, .15, .20, .25, null] },
+    { id: "modelo_al_dia", block: "Capital", text: "¿Tienes un modelo financiero y un cap table al día?", type: "choice",
+      options: ["Sí, ambos", "A medias", "No todavía"] },
+    { id: "cuando_capital", block: "Capital", text: "¿Para cuándo necesitas el capital?", type: "choice",
+      options: ["En menos de 3 meses", "Entre 3 y 6 meses", "En más de 6 meses", "No estoy buscando todavía"] }
+  ];
+
+  var answers = {};
+  var current = 0;
+  var lastResult = null, contactName = "", startupName = "";
+  var el = function (id) { return document.getElementById(id); };
+
+  function show(id) {
+    ["screenIntro", "screenQuestion", "screenContact", "screenResult"].forEach(function (s) { el(s).classList.toggle("hidden", s !== id); });
+  }
+
+  function startQuiz() { answers = {}; current = 0; show("screenQuestion"); renderQuestion(); }
+
+  function renderQuestion() {
+    var q = questions[current];
+    el("qCount").textContent = "Pregunta " + (current + 1) + " / " + questions.length;
+    el("qAxis").textContent = q.block;
+    el("qText").textContent = q.text;
+    var optsWrap = el("qOptions");
+    optsWrap.innerHTML = "";
+    el("qHelp").classList.add("hidden");
+    if (q.type === "choice") {
+      el("qNumber").classList.add("hidden");
+      optsWrap.classList.remove("hidden");
+      q.options.forEach(function (label, i) {
+        var b = document.createElement("button");
+        var chosen = answers[q.id] && answers[q.id].label === label;
+        b.className = "opt" + (chosen ? " chosen" : "");
+        b.innerHTML = '<span class="num">' + (i + 1) + '</span><span></span>';
+        b.lastChild.textContent = label;
+        b.onclick = function () { choose(q, i); };
+        optsWrap.appendChild(b);
+      });
+    } else {
+      optsWrap.classList.add("hidden");
+      el("qNumber").classList.remove("hidden");
+      el("numHelp").textContent = q.help || "Cifra aproximada en dólares.";
+      var prev = answers[q.id];
+      el("numInput").value = prev && prev.value != null ? prev.value : "";
+      setTimeout(function () { el("numInput").focus(); }, 50);
+    }
+    el("backBtn").disabled = current === 0;
+    el("mercuryFill").style.width = (current / questions.length * 100) + "%";
+  }
+
+  function choose(q, i) {
+    answers[q.id] = { label: q.options[i], value: q.values ? q.values[i] : q.options[i] };
+    advance();
+  }
+  function submitNumber() {
+    var raw = el("numInput").value.replace(/[^0-9]/g, "");
+    if (raw === "") { el("numInput").focus(); return; }
+    answers[questions[current].id] = { label: raw, value: parseInt(raw, 10) };
+    advance();
+  }
+  function skipNumber() { answers[questions[current].id] = { label: "No lo sé", value: null }; advance(); }
+  el("numInput").addEventListener("keydown", function (e) { if (e.key === "Enter") submitNumber(); });
+
+  function advance() {
+    el("mercuryFill").style.width = ((current + 1) / questions.length * 100) + "%";
+    setTimeout(function () {
+      if (current < questions.length - 1) { current++; renderQuestion(); } else { show("screenContact"); }
+    }, 200);
+  }
+  function prevQuestion() { if (current > 0) { current--; renderQuestion(); } }
+
+  function v(id) { return answers[id] ? answers[id].value : null; }
+  function num(x) { return typeof x === "number" && isFinite(x); }
+  function dec(x) { return (Math.round(x * 10) / 10).toLocaleString("es-VE"); }
+  function pct(x) { return dec(x * 100) + "%"; }
+  function usd(x) { return "US$" + Math.round(x).toLocaleString("es-VE"); }
+
+  // Semáforo: mayor es mejor
+  function hiGood(x, rojo, verde) { if (!num(x)) return "nd"; return x < rojo ? "rojo" : (x >= verde ? "verde" : "amarillo"); }
+
+  function evaluate() {
+    var vert = VERTICALES[v("vertical")] || VERTICALES["Servicios / Agencia tech"];
+    var merc = MERCADOS[v("mercado")] || MERCADOS["Otro"];
+    var ing = v("ingreso_ultimo_mes"), ing3 = v("ingreso_hace_3m"), gasto = v("gasto_mensual"), caja = v("caja");
+    var margen = v("margen_bruto"), conc = v("concentracion"), monto = v("monto_busca"), porc = v("porcentaje_ofrece");
+    var r = {}, s = {};
+
+    r.crecimiento_mensual = (num(ing) && num(ing3) && ing3 > 0 && ing > 0) ? Math.pow(ing / ing3, 1 / 3) - 1 : null;
+    s.crecimiento = hiGood(r.crecimiento_mensual, vert.gR, vert.gV);
+
+    r.margen_bruto = margen;
+    s.margen = hiGood(margen, vert.mR, vert.mV);
+
+    r.quema_neta = (num(gasto) && num(ing)) ? Math.max(0, gasto - ing) : null;
+    if (r.quema_neta === 0) { r.runway_meses = "autosostenible"; s.runway = "verde"; }
+    else if (num(r.quema_neta) && num(caja)) { r.runway_meses = caja / r.quema_neta; s.runway = hiGood(r.runway_meses, merc.rR, merc.rV); }
+    else { r.runway_meses = null; s.runway = "nd"; }
+
+    r.valoracion_post = (num(monto) && monto > 0 && num(porc) && porc > 0) ? monto / porc : null;
+    r.valoracion_vs_mediana = num(r.valoracion_post) ? r.valoracion_post / merc.med : null;
+    if (!num(r.valoracion_vs_mediana)) s.valoracion = "nd";
+    else if (r.valoracion_vs_mediana < .25 || r.valoracion_vs_mediana > 3) s.valoracion = "rojo";
+    else if (r.valoracion_vs_mediana >= .6 && r.valoracion_vs_mediana <= 1.6) s.valoracion = "verde";
+    else s.valoracion = "amarillo";
+
+    r.meses_cubre_ronda = (num(monto) && monto > 0 && num(gasto) && gasto > 0) ? monto / gasto : null;
+    s.ronda = hiGood(r.meses_cubre_ronda, 6, 18);
+
+    r.concentracion = conc;
+    s.concentracion = !num(conc) ? "nd" : (conc <= vert.cV ? "verde" : (conc > vert.cR ? "rojo" : "amarillo"));
+
+    var visibles = ["crecimiento", "margen", "runway", "valoracion", "ronda"];
+    var rojos = visibles.filter(function (k) { return s[k] === "rojo"; }).length;
+    var verdes = visibles.filter(function (k) { return s[k] === "verde"; }).length;
+    var sinDato = visibles.filter(function (k) { return s[k] === "nd"; }).length;
+    var etapa = v("etapa"), modelo = v("modelo_al_dia");
+    var temprana = etapa === "Idea" || etapa === "Prototipo / MVP" || !(num(ing) && ing > 0);
+
+    var etiqueta;
+    if (temprana || rojos >= 3 || sinDato >= 3 || (modelo === "No todavía" && rojos >= 2)) etiqueta = "Fundamentos primero";
+    else if (rojos === 0 && verdes >= 3 && modelo === "Sí, ambos") etiqueta = "Listo para conversar con inversionistas";
+    else etiqueta = "Casi listo: ajusta tus números";
+
+    // Triage interno (Intake): grupo A/B/C y escalón sugerido
+    var presupuesto = parseInt(el("fPresupuesto").value || "-1", 10);
+    var traccion = num(ing) && ing > 0;
+    var proxima = v("cuando_capital") === "En menos de 3 meses" || v("cuando_capital") === "Entre 3 y 6 meses";
+    var grupo = (traccion && proxima && presupuesto >= 100) ? "A" : ((traccion && (proxima || presupuesto >= 100)) ? "B" : "C");
+    var escalon = presupuesto >= 1500 ? "6 · Asesoría completa" : (presupuesto >= 300 ? "5 · Sprint de fundamentos" :
+                  (presupuesto >= 100 ? "4 · Sesión de decisión / Auditoría de Fugas" : "1–3 · Webinar y curso"));
+
+    return { etiqueta: etiqueta, rojos: rojos, verdes: verdes, sin_dato: sinDato, ratios: r, semaforos: s, grupo: grupo, escalon: escalon };
+  }
+
+  var COPY = {
+    "Listo para conversar con inversionistas": "Tus números cuentan una historia que un inversionista puede seguir. El siguiente paso no es mejorar el Excel: es preparar la conversación — la tesis, el uso de los fondos y el dataroom.",
+    "Casi listo: ajusta tus números": "Tienes tracción, pero hay números que un inversionista va a cuestionar en la primera reunión. Ajustarlos antes de salir a buscar capital cambia la valoración y la velocidad del cierre.",
+    "Fundamentos primero": "Antes de buscar inversionistas conviene armar los números que te van a pedir: cuánto vendes, cuánto te queda, cuánta caja quemas y para qué es el dinero. Salir antes cuesta caro en dilución o en un \"no\" difícil de revertir."
+  };
+
+  var LIGHTS = [
+    { k: "crecimiento", name: "Crecimiento mensual", val: function (r) { return num(r.crecimiento_mensual) ? pct(r.crecimiento_mensual) : "Sin dato"; },
+      t: { verde: "Creces a un ritmo que llama la atención en tu sector.", amarillo: "Creces, pero por debajo de lo que un inversionista espera en tu etapa.", rojo: "Tus ingresos no están creciendo o están cayendo: es lo primero que te van a preguntar.", nd: "Necesitamos ingresos de dos momentos distintos para medirlo." } },
+    { k: "margen", name: "Margen bruto", val: function (r) { return num(r.margen_bruto) ? "~" + pct(r.margen_bruto) : "Sin dato"; },
+      t: { verde: "Te queda un buen margen en cada venta para tu tipo de negocio.", amarillo: "Margen aceptable, con espacio para mejorar antes de escalar.", rojo: "Te queda poco en cada venta: crecer así consume caja en vez de generarla.", nd: "Saber cuánto te queda de cada venta es lo primero que pide un inversionista." } },
+    { k: "runway", name: "Meses de caja (runway)", val: function (r) { return r.runway_meses === "autosostenible" ? "Te sostienes" : (num(r.runway_meses) ? dec(r.runway_meses) + " meses" : "Sin dato"); },
+      t: { verde: "Tienes caja para negociar sin apuro.", amarillo: "Tu caja alcanza, pero el reloj ya corre: empieza la ronda antes de necesitarla.", rojo: "Te queda poca caja: levantar con urgencia debilita tu posición al negociar.", nd: "Con tus ingresos, gastos y caja calculamos cuántos meses aguantas." } },
+    { k: "valoracion", name: "Valoración que implica tu oferta", val: function (r) { return num(r.valoracion_post) ? usd(r.valoracion_post) : "Sin dato"; },
+      t: { verde: "Tu oferta está en el rango de las rondas pre-seed de tu mercado.", amarillo: "Tu oferta se aleja del rango típico de tu mercado: prepárate para justificarla.", rojo: "Lo que pides y lo que ofreces no cuadran con el mercado: o regalas empresa o pides de más.", nd: "Monto buscado entre el porcentaje ofrecido: lo que estás diciendo que vale tu empresa." } },
+    { k: "ronda", name: "Meses que cubre la ronda", val: function (r) { return num(r.meses_cubre_ronda) ? dec(r.meses_cubre_ronda) + " meses" : "Sin dato"; },
+      t: { verde: "La ronda te da tiempo para llegar al siguiente hito.", amarillo: "La ronda es corta: lo usual es dimensionarla para 18 a 24 meses.", rojo: "Con ese monto volverías a buscar dinero en pocos meses.", nd: "Compara el monto que buscas con tu gasto mensual." } }
+  ];
+
+  function val(id) { return el(id).value.trim(); }
+
+  function submitContact(ev) {
+    ev.preventDefault();
+    var err = el("formError");
+    var nombre = val("fNombre"), wa = val("fWhatsapp"), email = val("fEmail");
+    if (nombre.length < 2) { err.textContent = "Escribe tu nombre."; return; }
+    if (!wa && !email) { err.textContent = "Déjanos al menos tu WhatsApp o tu correo."; return; }
+    if (wa && wa.replace(/\D/g, "").length < 10) { err.textContent = "Revisa el número de WhatsApp."; return; }
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = "Revisa el correo."; return; }
+    if (!el("fConsent").checked) { err.textContent = "Marca la autorización para continuar."; return; }
+    err.textContent = "";
+    var btn = el("contactBtn"); btn.disabled = true; btn.textContent = "Guardando…";
+
+    var res = evaluate();
+    var resp = {};
+    questions.forEach(function (q) { resp[q.id] = answers[q.id] ? answers[q.id].value : null; });
+    resp.presupuesto_asesoria = el("fPresupuesto").value ? el("fPresupuesto").options[el("fPresupuesto").selectedIndex].text : null;
+    var fila = {
+      instrumento: "test_startups", version_instrumento: VERSION,
+      nombre: nombre, whatsapp: wa || null, email: email || null,
+      empresa: val("fEmpresa") || null, ciudad: val("fCiudad") || null, sector: v("vertical"),
+      origen: ORIGEN, consentimiento: true, texto_consentimiento: el("consentText").textContent,
+      respuestas: resp, resultado: res
+    };
+    contactName = nombre; startupName = val("fEmpresa");
+    guardar(fila, 0).then(function () { showResult(res); });
+  }
+
+  function guardar(fila, intento) {
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var t = ctrl ? setTimeout(function () { ctrl.abort(); }, 12000) : null;
+    return fetch(SUPABASE_URL + "/rest/v1/envios", {
+      method: "POST",
+      headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
+      body: JSON.stringify(fila), signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) { if (t) clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); })
+      .catch(function () {
+        if (t) clearTimeout(t);
+        if (intento < 1) return guardar(fila, intento + 1);
+        try { var p = JSON.parse(localStorage.getItem("quimera_pendientes_st") || "[]"); p.push(fila); localStorage.setItem("quimera_pendientes_st", JSON.stringify(p.slice(-5))); } catch (e) {}
+      });
+  }
+  (function () {
+    try { var p = JSON.parse(localStorage.getItem("quimera_pendientes_st") || "[]"); if (!p.length) return;
+      localStorage.removeItem("quimera_pendientes_st"); p.forEach(function (f) { guardar(f, 1); }); } catch (e) {}
+  })();
+
+  function showResult(res) {
+    show("screenResult");
+    el("mercuryFill").style.width = "100%";
+    el("resultTitle").textContent = res.etiqueta;
+    el("resultCopy").textContent = COPY[res.etiqueta];
+    var wrap = el("lights"); wrap.innerHTML = "";
+    LIGHTS.forEach(function (L) {
+      var color = res.semaforos[L.k];
+      var d = document.createElement("div"); d.className = "light";
+      d.innerHTML = '<span class="dot ' + color + '"></span><span class="light-name"></span><span class="light-val"></span><span class="light-text"></span>';
+      d.children[1].textContent = L.name; d.children[2].textContent = L.val(res.ratios); d.children[3].textContent = L.t[color];
+      wrap.appendChild(d);
+    });
+    lastResult = res;
+    var quien = contactName + (startupName ? (", de " + startupName) : "");
+    var body = "Hola Julio, soy " + quien + ". Hice el Test de preparación para inversión de Quimera Group y mi resultado fue \"" + res.etiqueta + "\" (" + res.rojos + " en rojo, " + res.verdes + " en verde). Me gustaría conversarlo.";
+    el("waBtn").href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(body);
+    el("emailBtn").href = "mailto:" + JULIO_EMAIL + "?subject=" + encodeURIComponent("Test de preparación para inversión — " + quien) + "&body=" + encodeURIComponent(body);
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
