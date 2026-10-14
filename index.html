@@ -523,7 +523,7 @@
             <div class="field"><label for="fCiudad">Ciudad</label>
               <input id="fCiudad" type="text" autocomplete="address-level2" maxlength="80" placeholder="Valencia"></div>
             <div class="field"><label for="fSector">Sector</label>
-              <select id="fSector">
+              <select id="fSector" onchange="toggleSectorOtro()">
                 <option value="">Elige uno</option>
                 <option>Comercio y distribución</option>
                 <option>Manufactura</option>
@@ -536,6 +536,8 @@
                 <option>Otro</option>
               </select></div>
           </div>
+          <div class="field hidden" id="sectorOtroWrap"><label for="fSectorOtro">¿Cuál sector?</label>
+            <input id="fSectorOtro" type="text" maxlength="70" placeholder="Ej. Agroindustria, Educación, Transporte"></div>
           <label class="consent"><input id="fConsent" type="checkbox">
             <span id="consentText">Autorizo a Quimera Group a guardar mis datos para contactarme sobre mi resultado, y a usar mis respuestas de forma anónima y agregada en estudios y contenidos. Nunca se publicarán datos que me identifiquen.</span></label>
           <p class="form-error" id="formError" role="alert"></p>
@@ -698,6 +700,17 @@
 
   function val(id) { return document.getElementById(id).value.trim(); }
 
+  function toggleSectorOtro() {
+    var otro = document.getElementById('fSector').value === 'Otro';
+    document.getElementById('sectorOtroWrap').classList.toggle('hidden', !otro);
+    if (otro) setTimeout(function () { document.getElementById('fSectorOtro').focus(); }, 50);
+  }
+  function sectorFinal() {
+    var s = val('fSector');
+    if (s === 'Otro' && val('fSectorOtro')) return ('Otro: ' + val('fSectorOtro')).slice(0, 80);
+    return s || null;
+  }
+
   function submitContact(ev) {
     ev.preventDefault();
     var err = document.getElementById('formError');
@@ -706,6 +719,7 @@
     if (!wa && !email) { err.textContent = 'Déjanos al menos tu WhatsApp o tu correo.'; return; }
     if (wa && wa.replace(/\D/g, '').length < 10) { err.textContent = 'Revisa el número de WhatsApp.'; return; }
     if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Revisa el correo.'; return; }
+    if (val('fSector') === 'Otro' && val('fSectorOtro').length < 2) { err.textContent = 'Escribe cuál es tu sector.'; return; }
     if (!document.getElementById('fConsent').checked) { err.textContent = 'Marca la autorización para continuar.'; return; }
     err.textContent = '';
     var btn = document.getElementById('contactBtn'); btn.disabled = true; btn.textContent = 'Guardando…';
@@ -716,7 +730,7 @@
     var fila = {
       instrumento: 'termometro', version_instrumento: VERSION,
       nombre: nombre, whatsapp: wa || null, email: email || null,
-      empresa: val('fEmpresa') || null, ciudad: val('fCiudad') || null, sector: val('fSector') || null,
+      empresa: val('fEmpresa') || null, ciudad: val('fCiudad') || null, sector: sectorFinal(),
       origen: ORIGEN, consentimiento: true,
       texto_consentimiento: document.getElementById('consentText').textContent,
       respuestas: resp, resultado: s
