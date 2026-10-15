@@ -514,6 +514,11 @@
         <p class="q-text" id="qText"></p>
         <p class="q-help hidden" id="qHelp"></p>
         <div class="options" id="qOptions"></div>
+        <div id="qOther" class="hidden" style="margin-top:12px">
+          <div class="field"><label for="otherInput">¿Cuál? Descríbelo en pocas palabras</label>
+            <input id="otherInput" type="text" maxlength="80" placeholder="Ej. Edtech, Agrotech, Salud digital"></div>
+          <button class="btn-primary" onclick="submitOther()">Siguiente →</button>
+        </div>
         <div id="qNumber" class="hidden">
           <div class="num-wrap"><span class="num-prefix">US$</span>
             <input class="num-input" id="numInput" type="text" inputmode="numeric" autocomplete="off" placeholder="0"></div>
@@ -602,7 +607,8 @@
     "Marketplace / Plataforma": { mR: .30, mV: .45, cV: .20, cR: .40, gR: .03, gV: .10 },
     "Hardware / IoT":           { mR: .35, mV: .45, cV: .20, cR: .40, gR: .02, gV: .06 },
     "Cripto / RWA / Web3":      { mR: .30, mV: .45, cV: .20, cR: .40, gR: .03, gV: .10 },
-    "Comercio / Consumo":       { mR: .25, mV: .40, cV: .20, cR: .40, gR: .02, gV: .06 }
+    "Comercio / Consumo":       { mR: .25, mV: .40, cV: .20, cR: .40, gR: .02, gV: .06 },
+    "Otro":                     { mR: .30, mV: .50, cV: .20, cR: .40, gR: .03, gV: .08 }
   };
   // Referencias por mercado (Equidam H1 2026): valoración pre-seed mediana, runway rojo/verde (meses)
   var MERCADOS = {
@@ -616,7 +622,7 @@
   var questions = [
     { id: "etapa", block: "Perfil", text: "¿En qué etapa está tu startup?", type: "choice",
       options: ["Idea", "Prototipo / MVP", "Primeros ingresos", "Ingresos recurrentes", "Pre-seed en curso"] },
-    { id: "vertical", block: "Perfil", text: "¿Qué tipo de startup es?", type: "choice", options: Object.keys(VERTICALES) },
+    { id: "vertical", block: "Perfil", text: "¿Qué tipo de startup es?", type: "choice", options: Object.keys(VERTICALES), other: "Otro" },
     { id: "mercado", block: "Perfil", text: "¿Dónde está la mayoría de tus clientes?", type: "choice", options: Object.keys(MERCADOS) },
     { id: "ingreso_ultimo_mes", block: "Tracción", text: "¿Cuánto cobraste el último mes?", type: "number", help: "Lo que efectivamente entró a caja, no lo facturado. Si aún no vendes, escribe 0." },
     { id: "ingreso_hace_3m", block: "Tracción", text: "¿Y cuánto cobraste hace tres meses?", type: "number", help: "El mismo dato, pero de tres meses atrás. Sirve para medir tu ritmo de crecimiento." },
@@ -654,6 +660,7 @@
     var optsWrap = el("qOptions");
     optsWrap.innerHTML = "";
     el("qHelp").classList.add("hidden");
+    el("qOther").classList.add("hidden");
     if (q.type === "choice") {
       el("qNumber").classList.add("hidden");
       optsWrap.classList.remove("hidden");
@@ -663,7 +670,9 @@
         b.className = "opt" + (chosen ? " chosen" : "");
         b.innerHTML = '<span class="num">' + (i + 1) + '</span><span></span>';
         b.lastChild.textContent = label;
-        b.onclick = function () { choose(q, i); };
+        b.onclick = function () {
+          if (q.other && label === q.other) { openOther(q, b); } else { choose(q, i); }
+        };
         optsWrap.appendChild(b);
       });
     } else {
@@ -678,7 +687,25 @@
     el("mercuryFill").style.width = (current / questions.length * 100) + "%";
   }
 
+  function openOther(q, btn) {
+    Array.prototype.forEach.call(el("qOptions").children, function (c) { c.classList.remove("chosen"); });
+    btn.classList.add("chosen");
+    el("qOther").classList.remove("hidden");
+    var prev = answers[q.id + "_otro"];
+    el("otherInput").value = prev ? prev.value : "";
+    setTimeout(function () { el("otherInput").focus(); }, 50);
+  }
+  function submitOther() {
+    var q = questions[current], txt = el("otherInput").value.trim();
+    if (txt.length < 2) { el("otherInput").focus(); return; }
+    answers[q.id] = { label: q.other, value: q.other };
+    answers[q.id + "_otro"] = { label: txt, value: txt };
+    advance();
+  }
+  el("otherInput").addEventListener("keydown", function (e) { if (e.key === "Enter") submitOther(); });
+
   function choose(q, i) {
+    if (q.other) delete answers[q.id + "_otro"];
     answers[q.id] = { label: q.options[i], value: q.values ? q.values[i] : q.options[i] };
     advance();
   }
@@ -798,11 +825,13 @@
     var res = evaluate();
     var resp = {};
     questions.forEach(function (q) { resp[q.id] = answers[q.id] ? answers[q.id].value : null; });
+    resp.vertical_otro = answers.vertical_otro ? answers.vertical_otro.value : null;
     resp.presupuesto_asesoria = el("fPresupuesto").value ? el("fPresupuesto").options[el("fPresupuesto").selectedIndex].text : null;
     var fila = {
       instrumento: "test_startups", version_instrumento: VERSION,
       nombre: nombre, whatsapp: wa || null, email: email || null,
-      empresa: val("fEmpresa") || null, ciudad: val("fCiudad") || null, sector: v("vertical"),
+      empresa: val("fEmpresa") || null, ciudad: val("fCiudad") || null,
+      sector: v("vertical") === "Otro" && answers.vertical_otro ? ("Otro: " + answers.vertical_otro.value).slice(0, 80) : v("vertical"),
       origen: ORIGEN, consentimiento: true, texto_consentimiento: el("consentText").textContent,
       respuestas: resp, resultado: res
     };
