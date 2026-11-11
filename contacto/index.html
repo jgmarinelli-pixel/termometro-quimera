@@ -32,7 +32,8 @@
   .field { margin-bottom: 10px; text-align: left; }
   .field label { display: block; font-size: .76rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
   .field input { width: 100%; font-family: inherit; font-size: .98rem; color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px; }
-  .field input:focus { border-color: var(--blue); outline: none; }
+  .field input:focus, .field select:focus { border-color: var(--blue); outline: none; }
+  .field select { width: 100%; font-family: inherit; font-size: .98rem; color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .78rem; line-height: 1.45; color: var(--ink-soft); margin: 6px 0 14px; text-align: left; }
   .consent input { margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--navy); }
@@ -74,6 +75,7 @@
         <div class="field"><label for="fEmpresa">Empresa</label><input id="fEmpresa" type="text" autocomplete="organization" maxlength="120"></div>
         <div class="field"><label for="fTelefono">Teléfono (WhatsApp)</label><input id="fTelefono" type="tel" autocomplete="tel" maxlength="30" placeholder="0412 123 4567"></div>
         <div class="field"><label for="fEmail">Correo</label><input id="fEmail" type="email" autocomplete="email" maxlength="160" placeholder="tu@empresa.com"></div>
+        <div class="field"><label for="fEvento">¿En qué evento nos conocimos?</label><input id="fEvento" type="text" maxlength="80" placeholder="Ej. Inforo Innovacción Next"></div>
         <label class="consent"><input id="fConsent" type="checkbox"><span id="consentText">Autorizo a Quimera Group a guardar mis datos para contactarme.</span></label>
         <p class="form-error" id="formError" role="alert"></p>
         <button class="btn-primary" id="sendBtn" type="submit">Conectar con Julio →</button>
@@ -110,11 +112,16 @@
   var CALENDAR_URL = "https://calendar.app.google/afVq3bAZ3uzVrF7J8";
   var CONTACT_EMAIL = "jgmarinelli" + "@" + "gmail.com";
   var params = new URLSearchParams(location.search);
-  var EVENTO = (params.get("e") || params.get("o") || "directo").replace(/[^\w\-áéíóúñÁÉÍÓÚÑ ]/g, "").slice(0, 80) || "directo";
+  var EVENTO_URL = (params.get("e") || params.get("o") || "").replace(/[-_]+/g, " ").trim().slice(0, 80);
+  if (/^(qr|directo|general|prueba)\b/i.test(EVENTO_URL)) EVENTO_URL = "";
+  var EVENTO = "";
   var el = function (id) { return document.getElementById(id); };
   function val(id) { return el(id).value.trim(); }
 
-  function eventoLegible() { return EVENTO === "directo" ? "" : EVENTO.replace(/[-_]+/g, " "); }
+  function eventoLegible() { return EVENTO; }
+  function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim(); }
+
+  if (EVENTO_URL) el("fEvento").value = EVENTO_URL;
 
   function mostrarFinal(nombre) {
     el("screenForm").classList.add("hidden");
@@ -132,6 +139,8 @@
     ev.preventDefault();
     var err = el("formError");
     var nombre = val("fNombre"), apellido = val("fApellido"), empresa = val("fEmpresa"), tel = val("fTelefono"), email = val("fEmail");
+    EVENTO = val("fEvento").slice(0, 80);
+    if (EVENTO.length < 2) { err.textContent = "Dime en qué evento nos conocimos."; return; }
     if (nombre.length < 2 || apellido.length < 2) { err.textContent = "Escribe tu nombre y apellido."; return; }
     if (empresa.length < 2) { err.textContent = "Escribe el nombre de tu empresa."; return; }
     if (tel.replace(/\D/g, "").length < 10) { err.textContent = "Revisa tu número de teléfono."; return; }
