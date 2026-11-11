@@ -473,6 +473,11 @@
   .light-name { font-weight: 700; font-size: 0.9rem; color: var(--ink); }
   .light-val { font-weight: 800; font-size: 0.9rem; color: var(--navy); font-variant-numeric: tabular-nums; text-align: right; }
   .light-text { grid-column: 2 / 4; font-size: 0.82rem; line-height: 1.45; color: var(--ink-soft); }
+  .btn-secondary { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; background: var(--white); color: var(--navy); border: 1.5px solid var(--navy); font-weight: 700; font-size: 0.98rem; padding: 14px 18px; border-radius: 12px; text-decoration: none; }
+  .btn-secondary:hover { background: var(--blue-tint); }
+  .share-box { margin-top: 22px; padding: 16px; border: 1.5px dashed var(--line); border-radius: 14px; text-align: center; }
+  .share-box p { margin: 0 0 10px; font-size: 0.88rem; line-height: 1.45; color: var(--ink-soft); }
+  .share-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-weight: 700; font-size: 0.92rem; text-decoration: none; padding: 10px 14px; border-radius: 10px; background: var(--blue-tint); }
   .disclaimer { font-size: 0.74rem; line-height: 1.45; color: var(--ink-faint); margin: 14px 0 0; text-align: center; }
 </style>
 </head>
@@ -579,8 +584,16 @@
           <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.85 9.85 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.1c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.52 1.9 1.05.94 1.93 1.23 2.21 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.27.36-.22.61-.13.24.09 1.55.73 1.82.87.26.13.44.19.5.3.06.11.06.63-.18 1.31z"/></svg>
           <span>Conversar mi resultado con Julio</span>
         </a>
+        <a class="btn-secondary" id="calBtn" href="#" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span>Agendar una conversación</span>
+        </a>
         <a class="email-fallback" id="emailBtn" href="#">¿Prefieres correo? Escríbeme aquí</a>
         <p class="disclaimer">Lectura orientativa hecha con tus propios datos y referencias generales de mercado (Equidam, 2026). No es una valoración ni asesoría de inversión.</p>
+        <div class="share-box">
+          <p>¿Conoces a otro founder que esté pensando en levantar capital?</p>
+          <a class="share-btn" id="shareBtn" href="#" target="_blank" rel="noopener">Recomendar el test por WhatsApp →</a>
+        </div>
         <div class="restart-row"><button onclick="startQuiz()">Volver a hacer el test</button></div>
       </div>
 
@@ -595,9 +608,13 @@
   var JULIO_EMAIL = "jgmarinelli@gmail.com";
   var SUPABASE_URL = "https://teduklaiajecldjlzlem.supabase.co";
   var SUPABASE_KEY = "sb_publishable_LB00MH8nbYUKYqHACuT4NA_CgvNhj_o";
-  var VERSION = "test-startups-v1-2026-10";
+  var VERSION = "test-startups-v2-2026-11";
+  var CALENDAR_URL = "https://calendar.app.google/afVq3bAZ3uzVrF7J8";
+  var PUBLIC_URL = "https://jgmarinelli-pixel.github.io/termometro-quimera/startups/";
   var params = new URLSearchParams(location.search);
-  var ORIGEN = (params.get("o") || params.get("origen") || params.get("utm_source") || "directo").slice(0, 80);
+  var REF = (params.get("ref") || "").replace(/[^a-z0-9]/gi, "").slice(0, 12);
+  var ORIGEN = REF ? ("referido:" + REF) : (params.get("o") || params.get("origen") || params.get("utm_source") || "directo").slice(0, 80);
+  var myId = null;
 
   // Umbrales por vertical (de la hoja Referencias del Intake): margen rojo/verde, concentración verde/rojo, crecimiento rojo/verde
   var VERTICALES = {
@@ -835,6 +852,7 @@
       origen: ORIGEN, consentimiento: true, texto_consentimiento: el("consentText").textContent,
       respuestas: resp, resultado: res
     };
+    try { if (window.crypto && crypto.randomUUID) { myId = crypto.randomUUID(); fila.id = myId; } } catch (e) {}
     contactName = nombre; startupName = val("fEmpresa");
     guardar(fila, 0).then(function () { showResult(res); });
   }
@@ -846,7 +864,7 @@
       method: "POST",
       headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
       body: JSON.stringify(fila), signal: ctrl ? ctrl.signal : undefined
-    }).then(function (r) { if (t) clearTimeout(t); if (!r.ok) throw new Error("HTTP " + r.status); })
+    }).then(function (r) { if (t) clearTimeout(t); if (!r.ok && r.status !== 409) throw new Error("HTTP " + r.status); })
       .catch(function () {
         if (t) clearTimeout(t);
         if (intento < 1) return guardar(fila, intento + 1);
@@ -876,6 +894,10 @@
     var body = "Hola Julio, soy " + quien + ". Hice el Test de preparación para inversión de Quimera Group y mi resultado fue \"" + res.etiqueta + "\" (" + res.rojos + " en rojo, " + res.verdes + " en verde). Me gustaría conversarlo.";
     el("waBtn").href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(body);
     el("emailBtn").href = "mailto:" + JULIO_EMAIL + "?subject=" + encodeURIComponent("Test de preparación para inversión — " + quien) + "&body=" + encodeURIComponent(body);
+    el("calBtn").href = CALENDAR_URL;
+    var link = PUBLIC_URL + (myId ? "?ref=" + myId.replace(/-/g, "").slice(0, 8) : "?o=recomendado");
+    var share = "Hice este test gratis de 4 minutos que muestra cómo vería un inversionista los números de tu startup. Te puede servir: " + link;
+    el("shareBtn").href = "https://wa.me/?text=" + encodeURIComponent(share);
     window.scrollTo(0, 0);
   }
 </script>
