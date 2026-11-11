@@ -89,7 +89,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         Guardar mi contacto
       </a>
-      <a id="vcfAlt" class="hidden" href="julio-marinelli.vcf" download="Julio-Marinelli.vcf" style="display:block;font-size:.78rem;font-weight:600;color:var(--ink-faint);text-decoration:underline;text-underline-offset:3px;margin:10px 0 2px">¿No se abrió? Descargar la tarjeta de contacto</a>
+      <p id="androidTip" class="hidden" style="font-size:.78rem;line-height:1.45;color:var(--ink-soft);margin:10px 0 2px">En Android: al tocar el botón se descarga la tarjeta. Ábrela desde el aviso de descarga y elige <b>Guardar</b> o <b>Importar</b>.</p>
       <div class="shortcuts">
         <a id="waBtn" href="#" target="_blank" rel="noopener">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.85 9.85 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"/></svg>WhatsApp</a>
@@ -124,16 +124,7 @@
     var msg = "Hola Julio, soy " + (nombre || "") + (ev ? ". Te conocí en " + ev : "") + ". Te escribo para conectar.";
     el("waBtn").href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);
     el("calBtn").href = CALENDAR_URL;
-    if (/Android/i.test(navigator.userAgent)) {
-      // En Android se abre directo la pantalla "Crear contacto" con los datos llenos
-      var x = function (k, v) { return "S." + k + "=" + encodeURIComponent(v) + ";"; };
-      var intent = "intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/raw_contact;"
-        + x("name", "Julio Marinelli") + x("phone", "+584122418591") + x("email", CONTACT_EMAIL)
-        + x("company", "Quimera Group C.A.") + x("job_title", "Director General")
-        + x("notes", "Economista · Magíster en Finanzas · linkedin.com/in/soyjuliomarinelli") + "end";
-      var b = el("vcardBtn"); b.href = intent; b.removeAttribute("download");
-      el("vcfAlt").classList.remove("hidden");
-    }
+    if (/Android/i.test(navigator.userAgent)) { el("androidTip").classList.remove("hidden"); }
     window.scrollTo(0, 0);
   }
 
