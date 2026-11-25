@@ -472,6 +472,15 @@
   .share-box p { margin: 0 0 10px; font-size: 0.88rem; line-height: 1.45; color: var(--ink-soft); }
   .share-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-weight: 700; font-size: 0.92rem; text-decoration: none; padding: 10px 14px; border-radius: 10px; background: var(--blue-tint); }
   @media (max-width: 380px) { .gauges.three .gauge-label { font-size: 0.66rem; } }
+
+  /* ---- oferta in company (solo origen taller) ---- */
+  .offer-box { margin: 0 0 18px; padding: 18px 18px 16px; border-radius: 14px; background: linear-gradient(155deg, var(--navy) 0%, var(--navy-black) 100%); color: var(--white); }
+  .offer-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-soft); margin-bottom: 8px; }
+  .offer-title { font-weight: 800; font-size: 1.12rem; line-height: 1.3; margin: 0 0 8px; color: var(--white); }
+  .offer-copy { font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.78); margin: 0 0 12px; }
+  .offer-meta { font-size: 0.8rem; font-weight: 600; color: var(--blue-soft); margin: 0 0 14px; }
+  .btn-offer { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: var(--white); color: var(--navy); text-decoration: none; font-weight: 700; font-size: 0.98rem; padding: 14px 18px; border-radius: 12px; }
+  .btn-offer:hover { background: var(--blue-tint); }
 </style>
 </head>
 <body>
@@ -595,6 +604,14 @@
         </div>
         <p class="struct-note" id="structNote"></p>
 
+        <div class="offer-box hidden" id="offerBox">
+          <span class="offer-tag">Para asistentes del taller del 11 de diciembre</span>
+          <h3 class="offer-title">¿Quieres llevar esto a tu empresa?</h3>
+          <p class="offer-copy" id="offerCopy"></p>
+          <p class="offer-meta" id="offerMeta"></p>
+          <a class="btn-offer" id="offerBtn" href="#" target="_blank" rel="noopener" onclick="trackOffer()">Ver el programa y el precio →</a>
+        </div>
+
         <a class="whatsapp-btn" id="waBtn" href="#" target="_blank" rel="noopener">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.85 9.85 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.1c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.52 1.9 1.05.94 1.93 1.23 2.21 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.27.36-.22.61-.13.24.09 1.55.73 1.82.87.26.13.44.19.5.3.06.11.06.63-.18 1.31z"/></svg>
           <span>Conversar mi resultado con Julio</span>
@@ -627,6 +644,25 @@
   var SUPABASE_URL = "https://teduklaiajecldjlzlem.supabase.co";
   var SUPABASE_KEY = "sb_publishable_LB00MH8nbYUKYqHACuT4NA_CgvNhj_o";
   var VERSION = "termometro-v3-ventaja-2026-11";
+
+  // ---- Oferta in company (taller 11-dic). Para cerrarla: cupos: 0, o espera a que pase la fecha "hasta". ----
+  var OFERTA = {
+    origenes: ["ccv-dic11"],                    // solo se muestra si el link trae ?o=ccv-dic11
+    hasta: "2026-12-18T23:59:59-04:00",         // limite para RESERVAR Y PAGAR (hora de Venezuela)
+    hasta_texto: "18 de diciembre",
+    cupos: null,                                 // null = no se muestra tope; con un numero, muestra "N cupos" y se cierra en 0
+    onepager: "in-company-valencia.pdf"          // PDF que vive en este mismo repositorio
+  };
+  var OFERTA_COPY = {
+    "Ventaja en marcha": "Tu ventaja existe. El programa in company (16 horas, en 2 jornadas o 4 sesiones) la protege y la convierte en un plan de crecimiento junto a tu equipo.",
+    "Ventaja sin explotar": "Sabes qué te distingue. En el programa in company (16 horas, en 2 jornadas o 4 sesiones) armamos con tu equipo las pruebas controladas para convertirla en crecimiento.",
+    "Creces sin saber por qué": "En el programa in company (16 horas, en 2 jornadas o 4 sesiones) trabajamos con tu equipo, sobre tus propios datos, para confirmar por qué te compran y poder repetirlo a propósito.",
+    "Compites a ciegas": "En el programa in company (16 horas, en 2 jornadas o 4 sesiones) buscamos con tu equipo, sobre tu propia empresa, dónde está la ventaja que hoy no estás viendo."
+  };
+  function ofertaActiva() {
+    var t = Date.parse(OFERTA.hasta);
+    return (OFERTA.cupos === null || OFERTA.cupos > 0) && !isNaN(t) && Date.now() <= t && OFERTA.origenes.indexOf(String(ORIGEN).toLowerCase()) !== -1;
+  }
   var params = new URLSearchParams(location.search);
   var REF = (params.get("ref") || "").replace(/[^a-z0-9]/gi, "").slice(0, 12);
   var ORIGEN = REF ? ("referido:" + REF) : (params.get("o") || params.get("origen") || params.get("utm_source") || "directo").slice(0, 80);
@@ -662,7 +698,7 @@
   };
 
   var answers = new Array(questions.length).fill(null);
-  var current = 0, contactName = "", lastResult = null, myId = null;
+  var current = 0, contactName = "", contactWa = "", contactEmail = "", lastResult = null, myId = null;
   var el = function (id) { return document.getElementById(id); };
 
   function show(id) {
@@ -750,7 +786,7 @@
       respuestas: resp, resultado: s
     };
     if (myId) fila.id = myId;
-    contactName = nombre;
+    contactName = nombre; contactWa = wa; contactEmail = email;
     guardar(fila, 0).then(function () { showResult(s); });
   }
 
@@ -796,7 +832,34 @@
     var link = PUBLIC_URL + (myId ? "?ref=" + myId.replace(/-/g, "").slice(0, 8) : "?o=recomendado");
     var share = "Hice este termómetro gratis de 3 minutos sobre por qué te compran a ti y no a tu competencia. Me pareció útil para tu negocio: " + link;
     el("shareBtn").href = "https://wa.me/?text=" + encodeURIComponent(share);
+    var box = el("offerBox");
+    if (ofertaActiva()) {
+      el("offerCopy").textContent = OFERTA_COPY[s.cuadrante];
+      el("offerMeta").textContent = "Precio especial Valencia si reservas y pagas hasta el " + OFERTA.hasta_texto + ". La sesión puede ser en diciembre o en enero." + (OFERTA.cupos ? " Quedan " + OFERTA.cupos + (OFERTA.cupos === 1 ? " cupo." : " cupos.") : "");
+      el("offerBtn").href = OFERTA.onepager;
+      box.classList.remove("hidden");
+    } else {
+      box.classList.add("hidden");
+    }
     window.scrollTo(0, 0);
+  }
+
+  // Registra el clic al one pager (no bloquea nada si falla)
+  function trackOffer() {
+    try {
+      var fila = {
+        instrumento: "termometro_clic_oferta", version_instrumento: VERSION,
+        nombre: contactName, whatsapp: contactWa || null, email: contactEmail || null,
+        origen: ORIGEN, consentimiento: true, texto_consentimiento: el("consentText").textContent,
+        respuestas: { evento: "clic_onepager", ref_envio: myId },
+        resultado: lastResult
+      };
+      fetch(SUPABASE_URL + "/rest/v1/envios", {
+        method: "POST",
+        headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
+        body: JSON.stringify(fila), keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
   }
 </script>
 </body>
